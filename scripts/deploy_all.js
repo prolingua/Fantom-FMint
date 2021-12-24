@@ -5,7 +5,7 @@
 async function main(network) {
   console.log('network: ', network.name);
 
-  const [deployer] = await ethers.getSigners();
+  const [deployer, borrower, bidder] = await ethers.getSigners();
   const deployerAddress = await deployer.getAddress();
   console.log(`Deployer's address: `, deployerAddress);
 
@@ -36,7 +36,7 @@ async function main(network) {
     'FantomLiquidationManager deployed at',
     fantomLiquidationManager.address
   );
-  await fantomLiquidationManager.initialize(
+  await fantomLiquidationManager.init(
     deployerAddress,
     fantomMintAddressProvider.address
   );
@@ -83,10 +83,7 @@ async function main(network) {
   const fantomMint = await FantomMint.deploy();
   await fantomMint.deployed();
   console.log('FantomMint deployed at', fantomMint.address);
-  await fantomMint.initialize(
-    deployerAddress,
-    fantomMintAddressProvider.address
-  );
+  await fantomMint.init(deployerAddress, fantomMintAddressProvider.address);
   ///
 
   ///
@@ -131,7 +128,7 @@ async function main(network) {
   const fantomFUSD = await FantomFUSD.deploy();
   await fantomFUSD.deployed();
   console.log('FantomFUSD deployed at', fantomFUSD.address);
-  //await fantomFUSD.initialize(deployerAddress); //why not working??
+  await fantomFUSD.init(deployerAddress); //why not working??
   //await fantomFUSD.init(deployerAddress); // if initialize in FantomFUSD is renamed to another name such as init, it will work
   ///
 
@@ -145,7 +142,7 @@ async function main(network) {
     'FantomMintRewardDistribution deployed at',
     fantomMintRewardDistribution.address
   );
-  await fantomMintRewardDistribution.initialize(
+  await fantomMintRewardDistribution.init(
     deployerAddress,
     fantomMintAddressProvider.address
   );
@@ -154,6 +151,7 @@ async function main(network) {
   ///
   let wFTMAddress;
   let priceOracleProxyAddress;
+  let mockToken2;
 
   if (network.name === 'localhost') {
     const MockToken = await ethers.getContractFactory('MockToken');
@@ -162,6 +160,7 @@ async function main(network) {
     console.log('MockToken deployed at', mockToken.address);
     wFTMAddress = mockToken.address;
     await mockToken.initialize('wFTM', 'wFTM', 18);
+    mockToken2 = mockToken;
   }
 
   switch (network.name) {
@@ -228,20 +227,22 @@ async function main(network) {
     18,
     true,
     true,
-    false
+    false,
+    true
   );
   // TODO: the FantomFUSD needs to run the initialize function first
-  /* await fantomMintTokenRegistry.addToken(
+  await fantomMintTokenRegistry.addToken(
     fantomFUSD.address,
     '',
     priceOracleProxyAddress,
     18,
     true,
     false,
+    true,
     true
-  ); */
+  );
 
-  //await fantomFUSD.addMinter(fantomMint.address); //TODO: FantomFUSD needs to run the initialize function first
+  await fantomFUSD.addMinter(fantomMint.address); //TODO: FantomFUSD needs to run the initialize function first
 
   await fantomLiquidationManager.updateFantomMintContractAddress(
     fantomMint.address
@@ -260,6 +261,36 @@ async function main(network) {
       break;
   }
   await fantomLiquidationManager.updateFantomFeeVault(fantomFeeVault);
+
+  console.log('Finished!');
+
+  if (network.name === 'localhost' || network.name === 'testnet') {
+    await fantomFUSD.mint(
+      await bidder.getAddress(),
+      etherToWei(9999).toString()
+    );
+
+    console.log('borrower address: ', borrower.address);
+    await mockToken2.mint(
+      await borrower.getAddress(),
+      etherToWei(9999).toString()
+    );
+
+    await mockToken2
+      .connect(borrower)
+      .approve(fantomMint.address, etherToWei(9999).toString());
+
+    await fantomMint
+      .connect(borrower)
+      .mustDeposit(mockToken2.address, etherToWei(9999).toString());
+    await fantomMint.connect(borrower).mustMintMax(fantomFUSD.address, 30000);
+  }
+
+  const collateralIsEligible = await fantomLiquidationManager.collateralIsEligible(
+    await borrower.getAddress()
+  );
+  console.log('collateralIsEligible:', collateralIsEligible);
+  ///
   ///
 }
 
