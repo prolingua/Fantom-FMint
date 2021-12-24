@@ -283,7 +283,7 @@ async function main(network) {
     await fantomMint
       .connect(borrower)
       .mustDeposit(mockToken2.address, etherToWei(9999).toString());
-    await fantomMint.connect(borrower).mustMintMax(fantomFUSD.address, 30000);
+    //await fantomMint.connect(borrower).mustMintMax(fantomFUSD.address, 30000);
   }
 
   const collateralIsEligible = await fantomLiquidationManager.collateralIsEligible(
