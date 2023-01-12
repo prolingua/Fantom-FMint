@@ -118,6 +118,8 @@ contract FantomLiquidationManager is
       tokenAddress = debtPool.getToken(index);
       tokenBalance = debtPool.balanceOf(_targetAddress, tokenAddress);
       if (tokenBalance > 0) {
+        require(tokenBalance <= ERC20(tokenAddress).allowance(msg.sender, address(this)), 'Low allowance of debt token.');
+
         ERC20Burnable(tokenAddress).burnFrom(msg.sender, tokenBalance);
         debtPool.sub(_targetAddress, tokenAddress, tokenBalance);
         emit Repaid(_targetAddress, msg.sender, tokenAddress, tokenBalance);
