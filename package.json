@@ -34,6 +34,7 @@
     "@openzeppelin/test-helpers": "^0.5.15",
     "@openzeppelin/upgrades": "^2.8.0",
     "@truffle/hdwallet-provider": "^1.4.2",
+    "chai-as-promised": "^7.1.1",
     "dotenv": "^10.0.0",
     "fs": "0.0.1-security",
     "hardhat": "^2.6.8",
