@@ -13,6 +13,9 @@ import '../FantomMint.sol';
 import '../utility/FantomMintTokenRegistry.sol';
 import '../modules/FantomMintBalanceGuard.sol';
 
+import "hardhat/console.sol";
+
+
 interface ISFCToFMint {
     function removeStake(address, uint256) external;
 }
@@ -141,7 +144,6 @@ contract FantomLiquidationManager is
       tokenBalance = collateralPool.balanceOf(_targetAddress, tokenAddress);
       if (tokenBalance > 0) {
         collateralPool.sub(_targetAddress, tokenAddress, tokenBalance);
-                
         ISFCToFMint(sfcToFMint).removeStake(_targetAddress, tokenBalance);
 
         FantomMint(fantomMintContract).settleLiquidation(tokenAddress, msg.sender, tokenBalance);

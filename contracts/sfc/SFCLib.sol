@@ -59,6 +59,15 @@ contract SFCLib is SFCBase {
         return stash.lockupBaseReward.add(stash.lockupExtraReward).add(stash.unlockedReward);
     }
 
+    function show_getLockupInfo_endTime(address delegator, uint256 toValidatorID) public view returns(uint256) {
+        console.log("delegator ", delegator);
+        console.log("toValidatorID ", toValidatorID);
+        uint256 endTime = getLockupInfo[delegator][toValidatorID].endTime;
+        console.log("endTime: ", endTime);
+        console.log("getLockupInfo[delegator][toValidatorID].endTime: ", getLockupInfo[delegator][toValidatorID].endTime);
+        return endTime;
+    }
+
     /*
     Constructor
     */
@@ -497,6 +506,10 @@ contract SFCLib is SFCBase {
         
         LockedDelegation storage ld = getLockupInfo[delegator][toValidatorID];
 
+        console.log("within unlockStake");
+        console.log("ld.endTime: ", ld.endTime);
+        console.log("ld.lockedStake: ", ld.lockedStake);
+        console.log("amount: ", amount);
         require(amount > 0, "zero amount");
         require(isLockedUp(delegator, toValidatorID), "not locked up");
         require(amount <= ld.lockedStake, "not enough locked stake");
@@ -526,4 +539,6 @@ contract SFCLib is SFCBase {
         slashingRefundRatio[validatorID] = refundRatio;
         emit UpdatedSlashingRefundRatio(validatorID, refundRatio);
     }
+
+   
 }

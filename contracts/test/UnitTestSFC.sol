@@ -3,8 +3,9 @@ pragma solidity ^0.5.0;
 import "../sfc/SFC.sol";
 import "../sfc/SFCI.sol";
 import "../sfc/SFCLib.sol";
+import "../sfc/SFCBase.sol";
 
-contract UnitTestSFCBase {
+contract UnitTestSFCBase is SFCBase {
     uint256 internal time;
     bool public allowedNonNodeCalls;
 
@@ -171,6 +172,8 @@ interface SFCUnitTestI {
     function createValidator(bytes calldata pubkey) external payable;
 
     function getSelfStake(uint256 validatorID) external view returns (uint256);
+
+    function show_getLockupInfo_endTime(address delegator, uint256 toValidatorID) external view returns(uint256);
 
     function delegate(uint256 toValidatorID) external payable;
 

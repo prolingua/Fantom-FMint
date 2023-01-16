@@ -140,7 +140,7 @@ contract('FantomLiquidationManager', function([
 
     await this.sfc.createValidator(pubkey, {
       from: borrower,
-      value: amount18('10')
+      value: amount18('1000')
     });
     await this.sfc.createValidator(pubkey, {
       from: account2,
@@ -161,11 +161,15 @@ contract('FantomLiquidationManager', function([
     await this.sfc.lockStake(
       testValidator1ID,
       60 * 60 * 24 * 364,
-      amount18('1'),
+      amount18('1000'),
       { from: borrower }
     );
+    //10000000000000000000000
+    //9999000000000000000000
 
     await sealEpoch(this.sfc, new BN(0).toString());
+
+    await this.sfc.getEpochValidatorIDs(5555);
 
     /** all the necessary setup  */
     this.fantomMintAddressProvider = await FantomMintAddressProvider.new({
@@ -324,10 +328,10 @@ contract('FantomLiquidationManager', function([
       expect(weiToEther(price).toString()).to.be.equal('1');
     });
 
-    it('should allow the borrower to deposit 9999 wFTM', async function() {
-      await this.mockToken.mint(borrower, etherToWei(9999));
+    it('should allow the borrower to deposit 999 wFTM', async function() {
+      await this.mockToken.mint(borrower, etherToWei(999));
 
-      await this.mockToken.approve(this.fantomMint.address, etherToWei(9999), {
+      await this.mockToken.approve(this.fantomMint.address, etherToWei(999), {
         from: borrower
       });
 
@@ -338,10 +342,10 @@ contract('FantomLiquidationManager', function([
       //console.log('canDeposit: ', canDeposit);
       expect(canDeposit).to.be.equal(true);
 
-      // borrower deposits all his/her 9999 wFTM
+      // borrower deposits all his/her 999 wFTM
       await this.fantomMint.mustDeposit(
         this.mockToken.address,
-        etherToWei(9999),
+        etherToWei(999),
         { from: borrower }
       );
 
@@ -356,15 +360,15 @@ contract('FantomLiquidationManager', function([
         borrower,
         this.mockToken.address
       );
-      expect(weiToEther(balance2)).to.be.equal('9999');
+      expect(weiToEther(balance2)).to.be.equal('999');
 
       // now FantomMint contract should get 9999 wFTM
       const balance3 = await this.mockToken.balanceOf(this.fantomMint.address);
-      expect(weiToEther(balance3)).to.be.equal('9999');
+      expect(weiToEther(balance3)).to.be.equal('999');
     });
   });
   describe('Mint fUSD', function() {
-    it('should give a maxToMint (fUSD) value around 3333', async function() {
+    it('should give a maxToMint (fUSD) value around 333', async function() {
       const maxToMint = await this.fantomMint.maxToMint(
         borrower,
         this.fantomFUSD.address,
@@ -426,6 +430,7 @@ contract('FantomLiquidationManager', function([
         etherToWei(5000),
         { from: liquidator }
       );
+
       var result = await this.fantomLiquidationManager.liquidate(borrower, {
         from: liquidator
       });
@@ -439,7 +444,7 @@ contract('FantomLiquidationManager', function([
         target: borrower,
         liquidator: liquidator,
         token: this.mockToken.address,
-        amount: etherToWei('9999')
+        amount: etherToWei('999')
       });
     });
 

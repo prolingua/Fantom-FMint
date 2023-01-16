@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 interface SFCI {
+
     function currentSealedEpoch() external view returns (uint256);
 
     function getEpochSnapshot(uint256) external view returns (uint256 endTime, uint256 epochFee, uint256 totalBaseRewardWeight, uint256 totalTxRewardWeight, uint256 _baseRewardPerSecond, uint256 totalStake, uint256 totalSupply);
