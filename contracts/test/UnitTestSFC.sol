@@ -218,7 +218,7 @@ interface SFCUnitTestI {
 
     function relockStake(uint256 toValidatorID, uint256 lockupDuration, uint256 amount) external;
 
-    function unlockStake(uint256 toValidatorID, uint256 amount) external returns (uint256);
+    function unlockStake(uint256 toValidatorID, uint256 amount, address) external returns (uint256);
 
     function initialize(uint256 sealedEpoch, uint256 _totalSupply, address nodeDriver, address lib, address consts, address _owner) external;
 

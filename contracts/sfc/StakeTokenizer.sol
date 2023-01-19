@@ -34,13 +34,18 @@ contract StakeTokenizer is Spacer, Initializable {
         require(ERC20Mintable(sFTMTokenAddress).mint(delegator, diff), "failed to mint sFTM");
     }
 
-    function redeemSFTM(uint256 validatorID, uint256 amount) external {
-        require(outstandingSFTM[msg.sender][validatorID] >= amount, "low outstanding sFTM balance");
-        require(IERC20(sFTMTokenAddress).allowance(msg.sender, address(this)) >= amount, "insufficient allowance");
-        outstandingSFTM[msg.sender][validatorID] -= amount;
+    function redeemSFTM(address _targetAddress, uint256 validatorID, uint256 amount) external {
+        address delegator = msg.sender;
+        if (_targetAddress != address(0x0)) {
+            delegator = _targetAddress;
+        }
+
+        require(outstandingSFTM[delegator][validatorID] >= amount, "low outstanding sFTM balance");
+        require(IERC20(sFTMTokenAddress).allowance(delegator, address(this)) >= amount, "insufficient allowance");
+        outstandingSFTM[delegator][validatorID] -= amount;
 
         // It's important that we burn after updating outstandingSFTM (protection against Re-Entrancy)
-        ERC20Burnable(sFTMTokenAddress).burnFrom(msg.sender, amount);
+        ERC20Burnable(sFTMTokenAddress).burnFrom(delegator, amount);
     }
 
     function allowedToWithdrawStake(address sender, uint256 validatorID) public view returns(bool) {
