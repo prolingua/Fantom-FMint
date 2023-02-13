@@ -58,15 +58,7 @@ contract SFCToFMint {
         if (stakedsFTM > 0) {
             stakeTokenizer.redeemSFTM(_targetAddress, validatorID, stakedsFTM);
         }
-        // console.log("-----");
-        // console.log("within removeStake");
-        // console.log("calling isLockedUp from sfcLib");
-        bool lockedUp = sfcLib.isLockedUp(_targetAddress, validatorID);
-        // console.log("lockedUp from sfcLib: ", lockedUp);
-        lockedUp = sfc.isLockedUp(_targetAddress, validatorID);
-        // console.log("lockedUp from sfc: ", lockedUp);
 
         sfc.unlockStake(validatorID, amount, _targetAddress);
-        //sfcLib.unlockStake(validatorID, amount, _targetAddress);
     }
 }

@@ -366,10 +366,10 @@ contract('FantomLiquidationManager', function([
       amountToMint = maxToMint;
 
       expect(maxToMint).to.be.bignumber.greaterThan('0');
-      expect(weiToEther(maxToMint) * 1).to.be.lessThanOrEqual(3333);
+      expect(weiToEther(maxToMint) * 1).to.be.lessThanOrEqual(333);
     });
 
-    it('should mint maximium (3333) amount of fUSD', async function() {
+    it('should mint maximium (333) amount of fUSD', async function() {
       // mint maximum amount possible of fUSD for borrower
       await this.fantomMint.mustMintMax(this.fantomFUSD.address, 30000, {
         from: borrower
@@ -378,7 +378,7 @@ contract('FantomLiquidationManager', function([
       const fUSDBalance = await this.fantomFUSD.balanceOf(borrower);
       totalSupply = weiToEther(await this.fantomFUSD.totalSupply());
 
-      expect(weiToEther(fUSDBalance) * 1).to.be.lessThanOrEqual(3333);
+      expect(weiToEther(fUSDBalance) * 1).to.be.lessThanOrEqual(333);
     });
   });
 
