@@ -498,18 +498,14 @@ contract SFCLib is SFCBase {
     }
 
     function unlockStake(uint256 toValidatorID, uint256 amount, address _targetAddress) external returns (uint256) {
-        // address delegator = msg.sender;
+        address delegator = msg.sender;
 
-        address delegator = _targetAddress;
-        // if (_targetAddress != address(0)) {
-        // }
+        if (_targetAddress != address(0)) {
+            delegator = _targetAddress;
+        }
         
         LockedDelegation storage ld = getLockupInfo[delegator][toValidatorID];
 
-        // console.log("within unlockStake");
-        // console.log("ld.endTime: ", ld.endTime);
-        // console.log("ld.lockedStake: ", ld.lockedStake);
-        // console.log("amount: ", amount);
         require(amount > 0, "zero amount");
         require(isLockedUp(delegator, toValidatorID), "not locked up");
         require(amount <= ld.lockedStake, "not enough locked stake");

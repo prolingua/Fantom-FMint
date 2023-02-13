@@ -454,7 +454,7 @@ contract('FantomLiquidationManager', function([
       });
     });
 
-    it('should have locked stake [1]', async function() {
+    it('(borrower) should have locked stake [1]', async function() {
       lockedStake = await this.sfc.getLockedStake(borrower, testValidator1ID);
       expect(weiToEther(lockedStake) * 1).to.be.equal(1);
     });
@@ -561,6 +561,11 @@ contract('FantomLiquidationManager', function([
         token: this.mockToken.address,
         amount: etherToWei('999')
       });
+    });
+
+    it('(second borrower) should have locked stake [1]', async function() {
+      lockedStake = await this.sfc.getLockedStake(secondBorrower, testValidator2ID);
+      expect(weiToEther(lockedStake) * 1).to.be.equal(1);
     });
 
     it('the (second) liquidator should have (10000 - 333) 9667 fUSD remaining', async function() {
